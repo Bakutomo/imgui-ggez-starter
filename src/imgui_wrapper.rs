@@ -197,21 +197,29 @@ impl ImGuiWrapper {
   }
 
   pub fn update_key_down(&mut self, key: KeyCode, mods: KeyMods) {
-    self.imgui.io_mut().key_shift = mods.contains(KeyMods::SHIFT);
-    self.imgui.io_mut().key_ctrl = mods.contains(KeyMods::CTRL);
-    self.imgui.io_mut().key_alt = mods.contains(KeyMods::ALT);
+    self.imgui.io_mut().key_shift = mods.contains(KeyMods::SHIFT)
+                                    | (key == KeyCode::LShift) | (key == KeyCode::RShift);
+    self.imgui.io_mut().key_ctrl = mods.contains(KeyMods::CTRL)
+                                    | (key == KeyCode::LControl) | (key == KeyCode::RControl);
+    self.imgui.io_mut().key_alt = mods.contains(KeyMods::ALT)
+                                    | (key == KeyCode::LAlt) | (key == KeyCode::RAlt);
+    self.imgui.io_mut().key_super = mods.contains(KeyMods::LOGO)
+                                    | (key == KeyCode::LWin) | (key == KeyCode::RWin);
     self.imgui.io_mut().keys_down[key as usize] = true;
   }
 
-  pub fn update_key_up(&mut self, key: KeyCode, mods: KeyMods) {
-    if mods.contains(KeyMods::SHIFT) {
+  pub fn update_key_up(&mut self, key: KeyCode, _mods: KeyMods) {
+    if (key == KeyCode::LShift) | (key == KeyCode::RShift) {
       self.imgui.io_mut().key_shift = false;
     }
-    if mods.contains(KeyMods::CTRL) {
+    if (key == KeyCode::LControl) | (key == KeyCode::RControl) {
       self.imgui.io_mut().key_ctrl = false;
     }
-    if mods.contains(KeyMods::ALT) {
+    if (key == KeyCode::LAlt) | (key == KeyCode::RAlt) {
       self.imgui.io_mut().key_alt = false;
+    }
+    if (key == KeyCode::LWin) | (key == KeyCode::RWin) {
+      self.imgui.io_mut().key_super = false;
     }
     self.imgui.io_mut().keys_down[key as usize] = false;
   }
